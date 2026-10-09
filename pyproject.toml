@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "matplotlylib"
+version = "0.1.0"
+description = "Convert matplotlib figures to Plotly figures"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+license-files = ["LICENSE.txt"]
+authors = [{ name = "Roberto Moura", email = "roberto@ffmoura.com" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+    "plotly>=7.0.0",
+    "matplotlib>=3.7.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "packaging", "ruff==0.11.12"]
+
+[project.urls]
+Homepage = "https://github.com/robertoffmoura/matplotlylib"
+Repository = "https://github.com/robertoffmoura/matplotlylib"
+
+[tool.hatch.build.targets.wheel]
+packages = ["matplotlylib"]
+exclude = ["matplotlylib/mplexporter/tests"]
