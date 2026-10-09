@@ -390,7 +390,7 @@ def test_transparent_text_colors_export():
 def test_export_color_maps_colors():
     """_export_color maps matplotlib color strings to plotly colors, keeping
     or overriding the alpha as requested."""
-    from plotly.matplotlylib.mpltools import _export_color
+    from matplotlylib.mpltools import _export_color
 
     expected_mappings = {
         (None, None): None,

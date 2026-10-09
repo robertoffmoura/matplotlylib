@@ -12,7 +12,7 @@ import matplotlib.dates
 
 from _plotly_utils.colors import hex_to_rgb
 
-from plotly.matplotlylib.mplexporter.utils import export_color
+from matplotlylib.mplexporter.utils import export_color
 
 
 def check_bar_match(old_bar, new_bar):

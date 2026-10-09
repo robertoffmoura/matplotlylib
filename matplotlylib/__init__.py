@@ -12,5 +12,5 @@ Most of the functionality should be accessed through the parent directory's
 
 """
 
-from plotly.matplotlylib.renderer import PlotlyRenderer
-from plotly.matplotlylib.mplexporter import Exporter
+from matplotlylib.renderer import PlotlyRenderer
+from matplotlylib.mplexporter import Exporter

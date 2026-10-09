@@ -11,11 +11,11 @@ import warnings
 
 import matplotlib.patches as mpatches
 import plotly.graph_objs as go
-from plotly.matplotlylib.mplexporter import Renderer
-from plotly.matplotlylib import mpltools
+from matplotlylib.mplexporter import Renderer
+from matplotlylib import mpltools
 
 
-from plotly.matplotlylib.mpltools import _export_color
+from matplotlylib.mpltools import _export_color
 
 
 def _per_path(values, i, default):
