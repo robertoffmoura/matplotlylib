@@ -10,7 +10,7 @@ import math
 import warnings
 import matplotlib.dates
 
-from _plotly_utils.colors import hex_to_rgb
+from plotly.colors import hex_to_rgb
 
 from matplotlylib.mplexporter.utils import export_color
 
