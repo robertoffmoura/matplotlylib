@@ -5,7 +5,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from packaging.version import Version
-import plotly.tools as tls
+from matplotlylib import mpl_to_plotly
 
 
 def test_native_legend_enabled_when_matplotlib_legend_present():
@@ -15,7 +15,7 @@ def test_native_legend_enabled_when_matplotlib_legend_present():
     ax.plot([0, 1], [1, 0], label="Line 2")
     ax.legend()
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     # Should enable native legend
     assert plotly_fig.layout.showlegend == True
@@ -31,7 +31,7 @@ def test_no_fake_legend_shapes_with_native_legend():
     ax.plot([0, 1], [0, 1], "o-", label="Data with markers")
     ax.legend()
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     # Should use native legend
     assert plotly_fig.layout.showlegend == True
@@ -51,7 +51,7 @@ def test_drawstyle_maps_to_line_shape():
         fig, ax = plt.subplots()
         ax.plot([0, 1, 2], [0, 1, 0], drawstyle=drawstyle)
 
-        plotly_fig = tls.mpl_to_plotly(fig)
+        plotly_fig = mpl_to_plotly(fig)
 
         assert plotly_fig.data[0].line.shape == shape
 
@@ -61,7 +61,7 @@ def test_legend_disabled_when_no_matplotlib_legend():
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], label="Line 1")  # Has label but no legend() call
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     # Should not have showlegend explicitly set to True
     # (Plotly's default behavior when no legend elements exist)
@@ -78,7 +78,7 @@ def test_legend_disabled_when_matplotlib_legend_not_visible():
     legend = ax.legend()
     legend.set_visible(False)  # Hide the legend
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     # Should not enable legend when matplotlib legend is hidden
     assert (
@@ -95,7 +95,7 @@ def test_multiple_traces_native_legend():
     ax.plot([0, 1, 2], [0.5, 0.5, 0.5], "s-", label="Line+Markers")
     ax.legend()
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.showlegend == True
     assert len(plotly_fig.data) == 3
@@ -122,7 +122,7 @@ def test_axis_mirror_with_spines_and_ticks():
     # Show ticks on all sides
     ax.tick_params(top=True, bottom=True, left=True, right=True)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.mirror == "ticks"
     assert plotly_fig.layout.yaxis.mirror == "ticks"
@@ -140,7 +140,7 @@ def test_axis_mirror_with_ticks_only():
     # Show ticks on all sides
     ax.tick_params(top=True, bottom=True, left=True, right=True)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.mirror == False
     assert plotly_fig.layout.yaxis.mirror == False
@@ -155,7 +155,7 @@ def test_axis_mirror_false_with_one_sided_ticks():
     # Default matplotlib behavior - ticks only on bottom and left
     ax.tick_params(top=False, bottom=True, left=True, right=False)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.mirror == True
     assert plotly_fig.layout.yaxis.mirror == True
@@ -176,7 +176,7 @@ def test_axis_mirror_mixed_configurations():
     ax.spines["left"].set_visible(True)
     ax.tick_params(left=True, right=True)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.mirror == "ticks"
     assert plotly_fig.layout.yaxis.mirror == False
@@ -191,7 +191,7 @@ def test_axis_showline_tied_to_main_spine():
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.showline == True
     assert plotly_fig.layout.yaxis.showline == True
@@ -206,7 +206,7 @@ def test_axis_showline_hidden_when_main_spine_hidden():
     ax.spines["bottom"].set_visible(False)
     ax.spines["left"].set_visible(False)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.showline == False
     assert plotly_fig.layout.yaxis.showline == False
@@ -219,7 +219,7 @@ def test_ticks_hidden_when_mpl_main_ticks_hidden():
 
     ax.tick_params(top=False, bottom=False, left=False, right=False)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.ticks == ""
     assert plotly_fig.layout.yaxis.ticks == ""
@@ -234,7 +234,7 @@ def test_twinx_axis_position_and_ticks():
     ax2.plot([0, 1, 2], [10, 5, 2])
     ax2.set_ylabel("right axis")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.yaxis.side == "left"
     assert plotly_fig.layout.yaxis.title.text == "left axis"
@@ -258,7 +258,7 @@ def test_twiny_axis_position_and_ticks():
     ax2.plot([10, 5, 2], [0, 1, 4])
     ax2.set_xlabel("top axis")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.side == "bottom"
     assert plotly_fig.layout.xaxis.title.text == "bottom axis"
@@ -279,7 +279,7 @@ def test_right_axis_ticks_hidden_when_mpl_right_ticks_hidden():
     ax2 = ax1.twinx()
     ax2.tick_params(right=False)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.yaxis2.side == "right"
     assert plotly_fig.layout.yaxis2.ticks == ""
@@ -291,7 +291,7 @@ def test_sharex_stacked_lines_in_correct_subplots():
     ax1.plot([1, 2, 3], [4, 5, 6])
     ax2.plot([1, 2, 3], [10, 20, 30])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) == 2
     # First line belongs to the top subplot
@@ -310,7 +310,7 @@ def test_sharex_stacked_lines_in_correct_subplots():
 def test_violinplot_bodies_are_filled_polygons():
     fig, ax = plt.subplots()
     ax.violinplot(np.random.randn(100, 3))
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     bodies = [t for t in plotly_fig.data if t.fill == "toself" and len(t.x) > 100]
     assert len(bodies) >= 3
 
@@ -320,7 +320,7 @@ def test_pcolor_rectangles_render():
     X, Y = np.meshgrid(x, x)
     fig, ax = plt.subplots()
     ax.pcolor(X, Y, np.sin(X) * np.cos(Y))
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     assert len(plotly_fig.data) == 100
     assert all(len(t.x) >= 4 for t in plotly_fig.data)
 
@@ -330,7 +330,7 @@ def test_boxplot_converts_with_none_marker_facecolor():
     fig, ax = plt.subplots()
     ax.boxplot(np.random.randn(100, 4))
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) > 0
 
@@ -341,7 +341,7 @@ def test_line_with_none_color_converts():
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], color="none")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) == 1
     assert plotly_fig.data[0].line.color == "rgba(0,0,0,0)"
@@ -354,7 +354,7 @@ def test_line_with_rgba_color_converts():
     ax.plot([0, 1], [0, 1], color=(1.0, 0.0, 0.0, 0.5))
     ax.plot([0, 1], [1, 0], color="#0000FF80")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.data[0].line.color == "rgba(255, 0, 0, 0.5)"
     assert plotly_fig.data[1].line.color == "rgba(0, 0, 255, 0.5019607843137255)"
@@ -365,7 +365,7 @@ def test_line_rgba_color_with_separate_alpha_converts():
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], color=(1.0, 0.0, 0.0, 0.2), alpha=0.5)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.data[0].line.color == "rgba(255, 0, 0, 0.5)"
 
@@ -379,7 +379,7 @@ def test_transparent_text_colors_export():
     ax.set_xlabel("xlabel", color="none")
     ax.set_ylabel("ylabel", color="none")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.annotations[0].font.color == "rgba(0,0,0,0)"
     assert plotly_fig.layout.title.font.color == "rgba(0,0,0,0)"
@@ -422,7 +422,7 @@ def test_scatter_with_multiple_colors_converts():
     fig, ax = plt.subplots()
     ax.scatter([0, 1, 2], [0, 1, 2], c=["red", "green", "blue"])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.data[0].mode == "markers"
     assert plotly_fig.data[0].marker.color == (
@@ -435,7 +435,7 @@ def test_scatter_with_multiple_colors_converts():
 def test_eventplot_segments_render():
     fig, ax = plt.subplots()
     ax.eventplot([np.random.randn(20) for _ in range(5)])
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     # Each of the 5 event rows is a line collection whose 20 segments are grouped
     assert len(plotly_fig.data) == 5
     assert all(t.x.count(None) == 19 for t in plotly_fig.data)
@@ -445,7 +445,7 @@ def test_stackplot_areas_render():
     x = np.arange(10)
     fig, ax = plt.subplots()
     ax.stackplot(x, np.random.rand(10), np.random.rand(10), np.random.rand(10))
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     assert len(plotly_fig.data) >= 3
 
 
@@ -453,7 +453,7 @@ def test_fill_between_renders():
     x = np.linspace(0, 2 * np.pi, 50)
     fig, ax = plt.subplots()
     ax.fill_between(x, np.sin(x), np.cos(x))
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     assert len(plotly_fig.data) >= 1
 
 
@@ -463,7 +463,7 @@ def test_collection_alpha():
     x = np.linspace(0, 2 * np.pi, 50)
     fig, ax = plt.subplots()
     ax.fill_between(x, np.sin(x), np.cos(x), color="red", alpha=0.4)
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     trace = plotly_fig.data[0]
     assert trace.fillcolor == "rgba(255,0,0,0.4)"
     assert trace.opacity is None
@@ -475,7 +475,7 @@ def test_violin_body_default_alpha():
     is set, the opacity field should not be set."""
     fig, ax = plt.subplots()
     ax.violinplot(np.random.randn(100, 3))
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     bodies = [
         t
         for t in plotly_fig.data
@@ -489,7 +489,7 @@ def test_stem_plot_renders():
     x = np.linspace(0, 2 * np.pi, 20)
     fig, ax = plt.subplots()
     ax.stem(x, np.sin(x))
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     # The 20 vertical stem lines are grouped into a single line trace with 19 None separators
     stem_lines = [
         t for t in plotly_fig.data if t.mode == "lines" and t.x.count(None) == 19
@@ -503,7 +503,7 @@ def test_contour_lines_convert():
     X, Y = np.meshgrid(x, x)
     fig, ax = plt.subplots()
     ax.contour(X, Y, np.sin(X) * np.cos(Y), 10)
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     assert len(plotly_fig.data) > 0
     assert all(t.fill is None for t in plotly_fig.data)
     assert all(t.mode == "lines" for t in plotly_fig.data)
@@ -515,7 +515,7 @@ def test_contourf_bands_render():
     X, Y = np.meshgrid(x, x)
     fig, ax = plt.subplots()
     ax.contourf(X, Y, np.sin(X) * np.cos(Y), 10)
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     filled = [t for t in plotly_fig.data if t.fill == "toself"]
     assert len(filled) > 0
 
@@ -524,7 +524,7 @@ def test_axis_linecolor_defaults_to_black():
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.linecolor == "#000000"
     assert plotly_fig.layout.yaxis.linecolor == "#000000"
@@ -536,7 +536,7 @@ def test_custom_axis_linecolors_are_preserved():
     ax.spines["left"].set_color("green")
     ax.plot([0, 1], [0, 1])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.linecolor == "#FF0000"
     assert plotly_fig.layout.yaxis.linecolor == "#008000"
@@ -549,7 +549,7 @@ def test_axis_linecolor_follows_right_axis_side():
     ax2.plot([0, 1], [1, 0])
     ax2.spines["right"].set_color("red")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.yaxis2.side == "right"
     assert plotly_fig.layout.yaxis2.linecolor == "#FF0000"
@@ -562,7 +562,7 @@ def test_axis_linecolor_follows_top_axis_side():
     ax.xaxis.set_ticks_position("top")
     ax.plot([0, 1], [0, 1])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.side == "top"
     assert plotly_fig.layout.xaxis.linecolor == "#FF0000"
@@ -576,7 +576,7 @@ def test_filled_path_collection_date_xaxis():
     ]
     fig, ax = plt.subplots()
     ax.fill_between(dates, np.sin(np.arange(10)), np.cos(np.arange(10)))
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     filled = [t for t in plotly_fig.data if t.fill == "toself"]
     assert len(filled) >= 1
     assert all(isinstance(x, str) for x in filled[0].x)
@@ -586,7 +586,7 @@ def test_background_colors_from_matplotlib_defaults():
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.plot_bgcolor == "#FFFFFF"
     assert plotly_fig.layout.paper_bgcolor == "#FFFFFF"
@@ -595,7 +595,7 @@ def test_background_colors_from_matplotlib_defaults():
 def test_stairs_converts_to_step_line():
     fig, ax = plt.subplots()
     ax.stairs([0.0, 1.0, 0.0], [0.0, 1.0, 2.0, 3.0])
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     assert len(plotly_fig.data) == 1
     trace = plotly_fig.data[0]
     assert trace.mode == "lines"
@@ -611,7 +611,7 @@ def test_stairs_date_xaxis():
     fig, ax = plt.subplots()
     ax.stairs([0.0, 1.0, 0.0], dates)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.type == "date"
     trace = plotly_fig.data[0]
@@ -623,7 +623,7 @@ def test_stairs_fill_converts_to_filled_area():
     fig, ax = plt.subplots()
     ax.stairs([0.0, 1.0, 0.0], [0.0, 1.0, 2.0, 3.0], fill=True)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     trace = plotly_fig.data[0]
     assert trace.fill == "toself"
@@ -637,7 +637,7 @@ def test_stairs_nan_values_split_into_disjoint_steps():
     fig, ax = plt.subplots()
     ax.stairs([1.0, np.nan, 0.5], [0.0, 1.0, 2.0, 3.0], baseline=0.2)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     trace = plotly_fig.data[0]
     assert tuple(trace.x) == (0.0, 0.0, 1.0, 1.0, None, 2.0, 2.0, 3.0, 3.0)
@@ -652,7 +652,7 @@ def test_stairs_date_xaxis_with_nan_values():
     fig, ax = plt.subplots()
     ax.stairs([1.0, np.nan, 0.5], dates)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     trace = plotly_fig.data[0]
     assert None in trace.x
@@ -665,7 +665,7 @@ def test_stairs_label_used_in_legend():
     ax.stairs([0.0, 1.0, 0.0], [0.0, 1.0, 2.0, 3.0], label="my stairs")
     ax.legend()
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.showlegend is True
     assert plotly_fig.data[0].name == "my stairs"
@@ -679,7 +679,7 @@ def test_stairs_without_label_hidden_from_legend():
     ax.plot([0, 1], [2, 2], label="Labeled line")
     ax.legend()
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.showlegend is True
     stairs = [trace for trace in plotly_fig.data if trace.name is None]
@@ -693,7 +693,7 @@ def test_custom_background_colors_are_preserved():
     ax.set_facecolor("lightgray")
     ax.plot([0, 1], [0, 1])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.plot_bgcolor == "#D3D3D3"
     assert plotly_fig.layout.paper_bgcolor == "#FFFFE0"
@@ -706,7 +706,7 @@ def test_semitransparent_axes_background_preserved():
     ax.set_facecolor((0.1, 0.2, 0.3, 0.4))
     ax.plot([0, 1], [0, 1])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.plot_bgcolor == "rgba(26, 51, 76, 0.4)"
 
@@ -720,7 +720,7 @@ def test_histogram_converts():
     fig, ax = plt.subplots()
     ax.hist(rng.randn(10000), 30)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) == 1
     assert plotly_fig.layout.bargap == 0
@@ -732,7 +732,7 @@ def test_line_color_is_valid_plotly_color():
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], color="red")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.data[0].line.color == "rgba(255, 0, 0, 1)"
 
@@ -743,7 +743,7 @@ def test_non_arithmetic_progression_xtickvals():
     ax.plot([0, 1], [0, 1])
     ax.set_xticks(xticks)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickvals == tuple(xticks)
 
@@ -754,7 +754,7 @@ def test_non_arithmetic_progression_yticks():
     ax.plot([0, 1], [0, 1])
     ax.set_yticks(yticks)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.yaxis.tickvals == tuple(yticks)
 
@@ -766,7 +766,7 @@ def test_non_arithmetic_progression_xticktext():
     ax.plot([0, 1], [0, 1])
     ax.set_xticks(xtickvals, xticktext)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickvals == tuple(xtickvals)
     assert plotly_fig.layout.xaxis.ticktext == tuple(xticktext)
@@ -782,7 +782,7 @@ def test_fixed_formatter_ticktext():
         ticker.FixedFormatter(["Baseline", "param = 1", "param = 2"])
     )
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickvals == (0.01, 0.53, 0.75)
     assert plotly_fig.layout.xaxis.ticktext == ("Baseline", "param = 1", "param = 2")
@@ -793,7 +793,7 @@ def test_no_legend_entries_for_internal_mpl_labels():
     fig, ax = plt.subplots()
     ax.plot([0, 1, 2, 3], [0, 1, 0, 1], "b", [0, 1, 2, 3], [1, 0, 1, 0], "r--")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.showlegend == False
     assert all(t.name is None for t in plotly_fig.data)
@@ -806,7 +806,7 @@ def test_unlabeled_traces_hidden_from_legend_when_figure_has_legend():
     ax.plot([0, 1], [1, 0])  # Unlabeled line
     ax.legend()
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.showlegend == True
     assert len(plotly_fig.data) == 2
@@ -824,7 +824,7 @@ def test_custom_date_xtickvals_are_converted():
     ax.plot(dates, np.random.rand(10))
     ax.set_xticks(dates[::3])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickvals == (
         "2023-01-01 00:00:00",
@@ -842,7 +842,7 @@ def test_uneven_custom_date_xtickvals_are_converted():
     ax.plot(dates, np.random.rand(10))
     ax.set_xticks(ticks)
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickvals == (
         "2023-01-01 00:00:00",
@@ -862,7 +862,7 @@ def test_custom_date_xtickvals_given_as_numbers_are_converted():
     ax.plot(dates, np.random.rand(10))
     ax.set_xticks([mdates.date2num(d) for d in dates[::3]])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickvals == (
         "2023-01-01 00:00:00",
@@ -877,7 +877,7 @@ def test_tick_label_color_exports():
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickfont.color == "#000000"
 
@@ -889,7 +889,7 @@ def test_dark_tick_label_color_exports():
         fig, ax = plt.subplots()
         ax.plot([0, 1], [0, 1])
 
-        plotly_fig = tls.mpl_to_plotly(fig)
+        plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickfont.color == "#FFFFFF"
 
@@ -900,7 +900,7 @@ def test_transparent_tick_label_color_exports():
     ax.plot([0, 1], [0, 1])
     ax.tick_params(labelcolor="none")
 
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert plotly_fig.layout.xaxis.tickfont.color == "rgba(0,0,0,0)"
     assert plotly_fig.layout.yaxis.tickfont.color == "rgba(0,0,0,0)"
@@ -912,7 +912,7 @@ def test_contour_rings_are_closed():
     X, Y = np.meshgrid(x, x)
     fig, ax = plt.subplots()
     ax.contour(X, Y, X**2 + Y**2, levels=[1, 4])
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) == 2
     assert plotly_fig.data[0].x[0] == plotly_fig.data[0].x[-1]
@@ -930,7 +930,7 @@ def test_disjoint_contour_subpaths_are_separated_by_none():
     Z = np.exp(-((X + 1.5) ** 2 + Y**2)) + np.exp(-((X - 1.5) ** 2 + Y**2))
     fig, ax = plt.subplots()
     ax.contour(X, Y, Z, levels=[0.5])
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) == 1
     xs = list(plotly_fig.data[0].x)
@@ -964,7 +964,7 @@ def test_line_collection_date_xaxis():
     fig, ax = plt.subplots()
     ax.xaxis_date()
     ax.contour(X, Y, np.sin(X) * np.cos(Y), 5)
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
     lines = [t for t in plotly_fig.data if t.mode == "lines"]
     assert len(lines) >= 1
     assert any(isinstance(x, str) for t in lines for x in t.x)
@@ -986,7 +986,7 @@ def test_contour_line_dash_styles():
         linewidths=1.5,
         linestyles=["dashed", "solid", "dotted", (0, (5, 2, 1, 2))],
     )
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert [t.line.dash for t in plotly_fig.data] == [
         "5.55px,2.4px",
@@ -1004,7 +1004,7 @@ def test_contour_line_dash_scales_with_linewidth():
     ax.contour(
         X, Y, np.sin(X) * np.cos(Y), levels=[0.5], linewidths=3, linestyles="dashed"
     )
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) == 1
     assert plotly_fig.data[0].line.width == 3
@@ -1017,7 +1017,7 @@ def test_contour_lines_showlegend_false():
     X, Y = np.meshgrid(x, x)
     fig, ax = plt.subplots()
     ax.contour(X, Y, np.sin(X) * np.cos(Y), levels=[-0.5, 0.5])
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     assert len(plotly_fig.data) >= 1
     assert all(t.showlegend is False for t in plotly_fig.data)
@@ -1031,7 +1031,7 @@ def test_contour_lines_not_in_legend():
     ax.plot([0, 1], [0, 1], label="Line")
     ax.contour(X, Y, np.sin(X) * np.cos(Y), levels=[-0.5, 0.5])
     ax.legend()
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     contour_traces = [t for t in plotly_fig.data if t.name != "Line"]
     assert len(contour_traces) >= 1
@@ -1054,7 +1054,7 @@ def test_consecutive_same_style_lines_grouped_into_one_trace():
         linestyles="solid",
         linewidths=1.5,
     )
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     # All 4 levels share the same style
     assert (
@@ -1085,7 +1085,7 @@ def test_mixed_style_lines_group_consecutive_matches():
         colors="k",
         linewidths=1.5,
     )
-    plotly_fig = tls.mpl_to_plotly(fig)
+    plotly_fig = mpl_to_plotly(fig)
 
     dashes = [t.line.dash for t in plotly_fig.data]
     if Version(matplotlib.__version__) >= Version("3.8"):
